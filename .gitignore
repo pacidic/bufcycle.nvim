@@ -1,0 +1,20 @@
+# Compiled Lua bytecode
+*.luac
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# LuaRocks specific files
+.luarocks/
+luarocks.lock
+
+# Lua language server configuration
+.luarc.json
+
