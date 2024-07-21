@@ -1,23 +1,21 @@
 
-local lfs = require("lfs")
-
 local opt = {}
 opt.enable_logging = false
 opt.logger = nil
 opt.log_level = nil
 
-local logging = {}
-logging.LOG = function(...)
+local M_ = {}
+M_.LOG = function(...)
     if not opt.enable_logging then return end
 
     if opt.logger == nil then
+        local lfs = require("lfs")
         require("logging.file")
-        local logdir = vim.fn.stdpath("data") .. '/bufcycle_nvim'
 
+        local logdir = vim.fn.stdpath("data") .. '/bufcycle_nvim'
         if not lfs.attributes(logdir, "mode") then lfs.mkdir(logdir) end
 
         opt.logger = logging.file(logdir .. "/lualogging.log")
-
         opt.log_level = logging.DEBUG
         opt.logger:setLevel(opt.log_level)
     end
@@ -25,7 +23,7 @@ logging.LOG = function(...)
     opt.logger:log(opt.log_level, unpack({...}))
 end
 
-logging.lazy_write = function(val, no_indent_or_linebreaks)
+M_.lazy_write = function(val, no_indent_or_linebreaks)
     if not opt.enable_logging then return end
 
     local pstr = vim.inspect(val)
@@ -36,4 +34,4 @@ logging.lazy_write = function(val, no_indent_or_linebreaks)
     return pstr
 end
 
-return logging
+return M_

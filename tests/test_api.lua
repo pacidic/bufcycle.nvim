@@ -34,8 +34,6 @@ describe("the api", function()
     end)
 
     it("sets up the plugin correctly without a skip function", function()
-        api.setup()
-
         global.tmp_buffers = utils.load_buffers(global.tmp_files)
 
         api.backward()
@@ -90,6 +88,26 @@ describe("the api", function()
                          global.tmp_buffers[1].bufnr)
     end)
 
+    it("does not cycle when enable_bounded_buffer_iteration is set to true", function()
+        api.setup({enable_bounded_buffer_iteration=true})
+        global.tmp_buffers = utils.load_buffers(global.tmp_files)
+
+        assert.are.equal(vim.api.nvim_get_current_buf(),
+                         global.tmp_buffers[n_buffers].bufnr)
+
+        for _ = 1,n_buffers+5 do
+          api.backward()
+        end
+
+        assert.are.equal(vim.api.nvim_get_current_buf(), global.tmp_buffers[1].bufnr)
+
+        for _ = 1,n_buffers+5 do
+          api.forward()
+        end
+
+        assert.are.equal(vim.api.nvim_get_current_buf(), global.tmp_buffers[n_buffers].bufnr)
+    end)
+
     it("moves backward correctly after calling backward and jumping", function()
 
         assert.are.equal(vim.api.nvim_get_current_buf(),
@@ -109,5 +127,34 @@ describe("the api", function()
         api.backward()
         assert.are.equal(vim.api.nvim_get_current_buf(),
                          global.tmp_buffers[n_buffers - 3].bufnr)
+    end)
+
+    it("jumps back to start of last iteration correctly", function()
+
+        assert.are_equal(vim.api.nvim_get_current_buf(),
+                         global.tmp_buffers[n_buffers].bufnr)
+
+        api.backward()
+        api.backward()
+        api.forward()
+
+        assert.are_equal(vim.api.nvim_get_current_buf(),
+                         global.tmp_buffers[n_buffers-1].bufnr)
+
+        api.return_to_last_bufcycle_start()
+
+        assert.are_equal(vim.api.nvim_get_current_buf(),
+                         global.tmp_buffers[n_buffers].bufnr)
+
+        local loaded_buffer = utils.load_buffer(create_tmp_file())
+        assert(loaded_buffer)
+
+        assert.are_equal(vim.api.nvim_get_current_buf(),
+                         loaded_buffer.bufnr)
+
+        api.return_to_last_bufcycle_start()
+
+        assert.are_equal(vim.api.nvim_get_current_buf(),
+                         global.tmp_buffers[n_buffers].bufnr)
     end)
 end)
