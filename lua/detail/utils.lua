@@ -11,6 +11,18 @@ utils.circular_inc = function(idx, sz) return idx % sz + 1 end
 
 utils.circular_dec = function(idx, sz) return (idx - 2) % sz + 1 end
 
+utils.bounded_idx = function(idx, sz)
+  if idx < 1 then
+    return 1
+  end
+
+  if idx > sz then
+    return sz
+  end
+
+  return idx
+end
+
 utils.make_buffer_info = function(bufnr, time_of_entry)
     -- return {bufnr=bufnr, time_of_entry=time_of_entry, name=vim.fn.bufname(bufnr)}
     return {bufnr = bufnr, time_of_entry = time_of_entry}

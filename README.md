@@ -31,10 +31,12 @@ Add the following to your `lua/plugins.lua` file, adjust as needed
       skip = function(bufnr)
         return vim.bo[bufnr].filetype == 'dirvish'
       end,
+      enable_bounded_buffer_iteration = true,
     })
 
     vim.keymap.set("n", '<C-n>', bufcycle.forward)
     vim.keymap.set("n", '<C-p>', bufcycle.backward)
+    vim.keymap.set("n", '<C-l>', bufcycle.return_to_last_bufcycle_start)
   end,
 }
 ```
@@ -57,38 +59,42 @@ bufcycle.setup({
   skip = function(bufnr)
     return vim.bo[bufnr].filetype == 'dirvish'
   end,
+  enable_bounded_buffer_iteration = true,
 })
 
 vim.keymap.set("n", '<C-n>', bufcycle.forward)
 vim.keymap.set("n", '<C-p>', bufcycle.backward)
+vim.keymap.set("n", '<C-l>', bufcycle.return_to_last_bufcycle_start)
 ```
 
 ## Configuration
 
-bufcycle.nvim does not provide any default key bindings. Instead, the `forward`
-and `backward` functions should be bound to a suitable key combination by the
-user, e.g.
+### `setup` table options
 
-```lua
-local bufcycle = require("bufcycle")
+`enable_bounded_buffer_iteration`
 
-vim.keymap.set("n", '<C-n>', bufcycle.forward)
-vim.keymap.set("n", '<C-p>', bufcycle.backward)
-```
+If set to true, this enables "bounded" iteration, i.e. iteration through the
+buffer history without cycling back to the initial buffer.
 
-An optional `skip` function may be provided via the `setup` function. With the
-following configuration, any `dirvish` buffer should be skipped when calling
-the `forward` or `backward` functions:
+`skip`
 
-```lua
-local bufcycle = require("bufcycle")
+A function that is called on every buffer switch when cycling through buffers.
+The function takes the buffer number as an argument. If true is returned, then
+the buffer is skipped by bufcycle.
 
-bufcycle.setup({
-  skip = function(bufnr)
-    return vim.bo[bufnr].filetype == 'dirvish'
-  end,
-})
-```
+### API functions
 
+bufcycle.nvim does not provide any default key bindings. Instead, the following
+functions should be bound to a suitable key mapping by the user.
 
+`backward`
 
+Starts a bufcycle, moves to previous buffer.
+
+`forward`
+
+Moves to next buffer while performing a bufcycle.
+
+`return_to_last_bufcycle_start`
+
+Returns to the buffer where the last bufcycle was started.

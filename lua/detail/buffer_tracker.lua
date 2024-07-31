@@ -1,4 +1,5 @@
 
+local bit = require("detail/bounded_iter")
 local cit = require("detail/circular_iter")
 local logging = require("detail/logging")
 local utils = require("detail/utils")
@@ -80,8 +81,7 @@ function BufferTracker:on_buf_delete(bufnr)
     end
 end
 
--- returns a circular iterator at the position of the current buffer
-function BufferTracker:circular_iter()
+function BufferTracker:sorted_array()
     local sorted_array = {}
     for bufnr, time_of_entry in pairs(self.buffer_entry_time_map_) do
         table.insert(sorted_array, utils.make_buffer_info(bufnr, time_of_entry))
@@ -94,7 +94,18 @@ function BufferTracker:circular_iter()
     table.sort(sorted_array,
                function(a, b) return a.time_of_entry < b.time_of_entry end)
 
-    return cit.CircularIter:new(sorted_array, #sorted_array)
+    return sorted_array
+end
+
+function BufferTracker:bounded_iter()
+  local sorted_array = self:sorted_array()
+  return bit.BoundedIter:new(sorted_array, #sorted_array)
+end
+
+-- returns a circular iterator at the position of the current buffer
+function BufferTracker:circular_iter()
+  local sorted_array = self:sorted_array()
+  return cit.CircularIter:new(sorted_array, #sorted_array)
 end
 
 local M_ = {}
