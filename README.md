@@ -98,3 +98,21 @@ Moves to next buffer while performing a bufcycle.
 `return_to_last_bufcycle_start`
 
 Returns to the buffer where the last bufcycle was started.
+
+## Tests
+
+Ensure `busted` and `nlua` are installed:
+```
+luarocks --local install nlua
+luarocks --local install busted
+```
+
+Ensure the luarocks paths are set correctly in your shell:
+```
+eval "$(luarocks path)"
+```
+
+Run tests via luarocks:
+```
+luarocks test --local tests/test_*.lua
+```
