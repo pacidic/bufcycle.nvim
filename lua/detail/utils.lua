@@ -24,8 +24,8 @@ utils.bounded_idx = function(idx, sz)
 end
 
 utils.make_buffer_info = function(bufnr, time_of_entry)
-    -- return {bufnr=bufnr, time_of_entry=time_of_entry, name=vim.fn.bufname(bufnr)}
-    return {bufnr = bufnr, time_of_entry = time_of_entry}
+    return {bufnr=bufnr, time_of_entry=time_of_entry, name=vim.fn.bufname(bufnr)}
+    -- return {bufnr = bufnr, time_of_entry = time_of_entry}
 end
 
 utils.now = function() return vim.uv.hrtime() - internal.startup_ns end

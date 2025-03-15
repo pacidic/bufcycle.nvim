@@ -111,7 +111,7 @@ api.setup = function(cfg)
     internal.buffer_tracker = bt.BufferTracker:new(cfg.skip)
     internal.enable_bounded_buffer_iteration = cfg.enable_bounded_buffer_iteration
 
-    vim.api.nvim_create_autocmd("BufEnter", {
+    vim.api.nvim_create_autocmd({"BufNew", "BufEnter"}, {
         group = buffer_tracker_group,
         pattern = "*",
         callback = function()
@@ -134,7 +134,7 @@ api.setup = function(cfg)
         callback = function() internal.buffer_tracker:on_buf_leave() end
     })
 
-    vim.api.nvim_create_autocmd({"BufUnload", "BufDelete"}, {
+    vim.api.nvim_create_autocmd({"BufDelete"}, {
         group = buffer_tracker_group,
         pattern = "*",
         callback = function()
